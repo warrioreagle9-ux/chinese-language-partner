@@ -1,33 +1,26 @@
-# Chinese Language Partner — Version 0.1
+# Chinese Language Partner — Version 0.2
 
-This is the first working prototype of the personal Chinese Language Partner app.
+This is the second working prototype of the personal Chinese Language Partner app.
 
-## Included
-- Home dashboard
-- HSK 1–5 selector
-- Topic filters
-- Noun / Verb / Adjective filters
-- Vocabulary cards
-- Chinese + pinyin + English
-- 3 example sentences per starter word
-- Chinese text-to-speech
-- Mark words as mastered (saved in browser)
-- Reading passages with pinyin + English
-- Tap-to-open dictionary for supported words
-- Real-life roleplay scenarios
-- Basic chat partner
-- PWA manifest + service worker for an app-like iPhone experience
+WHAT'S NEW
+- Full classic HSK 1–5 cumulative vocabulary library: 150 / 300 / 600 / 1200 / 2500 words.
+- HSK 1–5 level filtering.
+- Topic filtering: Food, Travel, Health, University, Communication, Culture, Daily Life.
+- Noun / Verb / Adjective filtering.
+- Chinese, pinyin and English for each vocabulary item.
+- Three example sentences are shown for each word using the app's contextual examples/templates.
+- Browser Chinese text-to-speech.
+- Mastered-word progress stored locally on the device.
+- Still completely free: no paid AI API is required for this version.
 
-## Run on Windows
-1. Extract this folder.
-2. Open a terminal in the folder.
-3. Run one of these commands if Python is installed:
-   `py -m http.server 8000`
-   or
-   `python -m http.server 8000`
-4. Open `http://localhost:8000` on your PC.
+IMPORTANT
+This version uses the classic HSK 2.0 framework (2500 cumulative words through HSK 5). The newer HSK 3.0 framework has a different vocabulary structure, so it should be added as a separate dataset rather than silently mixing the two systems.
 
-For iPhone installation, the app needs to be served over HTTPS on a reachable website. A simple local PC server is good for desktop testing, but not by itself for installing on an iPhone.
+INSTALL / UPDATE
+1. Download and extract the ZIP.
+2. Replace the files in your GitHub Pages repository with these files.
+3. Commit the changes.
+4. Wait for GitHub Pages to rebuild.
+5. Open the same GitHub Pages URL on your iPhone.
 
-## Next development step
-Replace the guided roleplay/chat responses with a real AI backend, then expand the vocabulary database to the full HSK 1–5 curriculum.
+The app loads the expanded vocabulary from a free open GitHub dataset at runtime. An internet connection is required the first time the full vocabulary library is loaded.

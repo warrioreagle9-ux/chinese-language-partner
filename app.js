@@ -1,78 +1,94 @@
 
-const vocab = [
- {id:"chi",cn:"吃",py:"chī",en:"to eat",level:1,topic:"Food",type:"Verb",
-  ex:[
-   ["我想吃中国菜。","Wǒ xiǎng chī Zhōngguó cài.","I want to eat Chinese food."],
-   ["你吃饭了吗？","Nǐ chīfàn le ma?","Have you eaten?"],
-   ["我们一起吃吧。","Wǒmen yìqǐ chī ba.","Let's eat together."]
-  ]},
- {id:"he",cn:"喝",py:"hē",en:"to drink",level:1,topic:"Food",type:"Verb",
-  ex:[
-   ["我每天喝很多水。","Wǒ měitiān hē hěnduō shuǐ.","I drink a lot of water every day."],
-   ["你想喝咖啡还是茶？","Nǐ xiǎng hē kāfēi háishì chá?","Do you want coffee or tea?"],
-   ["天气很热，多喝水。","Tiānqì hěn rè, duō hē shuǐ.","It's hot, drink more water."]
-  ]},
- {id:"fan",cn:"饭",py:"fàn",en:"meal; cooked rice",level:1,topic:"Food",type:"Noun",
-  ex:[
-   ["晚饭几点开始？","Wǎnfàn jǐ diǎn kāishǐ?","What time does dinner start?"],
-   ["我已经吃过饭了。","Wǒ yǐjīng chīguò fàn le.","I've already eaten."],
-   ["这家店的饭很好吃。","Zhè jiā diàn de fàn hěn hǎochī.","The food at this restaurant is delicious."]
-  ]},
- {id:"lvyou",cn:"旅游",py:"lǚyóu",en:"to travel; tourism",level:2,topic:"Travel",type:"Verb",
-  ex:[
-   ["我喜欢在中国旅游。","Wǒ xǐhuan zài Zhōngguó lǚyóu.","I like traveling in China."],
-   ["暑假我们想去云南旅游。","Shǔjià wǒmen xiǎng qù Yúnnán lǚyóu.","We want to travel to Yunnan during summer vacation."],
-   ["旅游可以了解不同的文化。","Lǚyóu kěyǐ liǎojiě bùtóng de wénhuà.","Traveling can help you understand different cultures."]
-  ]},
- {id:"yiyuan",cn:"医院",py:"yīyuàn",en:"hospital",level:2,topic:"Health",type:"Noun",
-  ex:[
-   ["我在医院实习。","Wǒ zài yīyuàn shíxí.","I am doing an internship at a hospital."],
-   ["医院离学校很近。","Yīyuàn lí xuéxiào hěn jìn.","The hospital is very close to the university."],
-   ["他昨天去了医院。","Tā zuótiān qù le yīyuàn.","He went to the hospital yesterday."]
-  ]},
- {id:"jia",cn:"检查",py:"jiǎnchá",en:"to examine; check-up",level:3,topic:"Health",type:"Verb",
-  ex:[
-   ["医生给病人做了检查。","Yīshēng gěi bìngrén zuò le jiǎnchá.","The doctor examined the patient."],
-   ["请先检查一下血压。","Qǐng xiān jiǎnchá yíxià xuèyā.","Please check the blood pressure first."],
-   ["明天我要去医院检查。","Míngtiān wǒ yào qù yīyuàn jiǎnchá.","Tomorrow I need to go to the hospital for a check-up."]
-  ]},
- {id:"xuexiao",cn:"学校",py:"xuéxiào",en:"school; university",level:1,topic:"University",type:"Noun",
-  ex:[
-   ["我的学校在合肥。","Wǒ de xuéxiào zài Héféi.","My university is in Hefei."],
-   ["你什么时候回学校？","Nǐ shénme shíhou huí xuéxiào?","When are you going back to school?"],
-   ["学校附近有很多餐厅。","Xuéxiào fùjìn yǒu hěnduō cāntīng.","There are many restaurants near the university."]
-  ]},
- {id:"canjia",cn:"参加",py:"cānjiā",en:"to participate; attend",level:3,topic:"University",type:"Verb",
-  ex:[
-   ["我明天要参加一个考试。","Wǒ míngtiān yào cānjiā yí ge kǎoshì.","I have to take an exam tomorrow."],
-   ["很多学生参加了这次活动。","Hěnduō xuéshēng cānjiā le zhè cì huódòng.","Many students participated in this activity."],
-   ["你愿意参加我们的聚会吗？","Nǐ yuànyì cānjiā wǒmen de jùhuì ma?","Would you like to join our party?"]
-  ]},
- {id:"fangbian",cn:"方便",py:"fāngbiàn",en:"convenient; convenient to",level:4,topic:"Daily Life",type:"Adjective",
-  ex:[
-   ["这里坐地铁很方便。","Zhèlǐ zuò dìtiě hěn fāngbiàn.","Taking the subway here is very convenient."],
-   ["你什么时候方便？","Nǐ shénme shíhou fāngbiàn?","When is convenient for you?"],
-   ["网上买东西很方便。","Wǎngshàng mǎi dōngxi hěn fāngbiàn.","Buying things online is very convenient."]
-  ]},
- {id:"renao",cn:"热闹",py:"rènào",en:"lively; bustling",level:4,topic:"Culture",type:"Adjective",
-  ex:[
-   ["晚上这条街特别热闹。","Wǎnshang zhè tiáo jiē tèbié rènào.","This street is especially lively at night."],
-   ["春节的时候城市很热闹。","Chūnjié de shíhou chéngshì hěn rènào.","The city is very lively during Spring Festival."],
-   ["我喜欢热闹的地方。","Wǒ xǐhuan rènào de dìfang.","I like lively places."]
-  ]},
- {id:"jianyi",cn:"建议",py:"jiànyì",en:"to suggest; suggestion",level:5,topic:"Communication",type:"Verb",
-  ex:[
-   ["医生建议他多休息。","Yīshēng jiànyì tā duō xiūxi.","The doctor suggested that he rest more."],
-   ["我建议我们早点出发。","Wǒ jiànyì wǒmen zǎodiǎn chūfā.","I suggest that we leave earlier."],
-   ["谢谢你的建议。","Xièxie nǐ de jiànyì.","Thank you for your suggestion."]
-  ]},
- {id:"zhongyao",cn:"重要",py:"zhòngyào",en:"important",level:2,topic:"Daily Life",type:"Adjective",
-  ex:[
-   ["健康很重要。","Jiànkāng hěn zhòngyào.","Health is very important."],
-   ["考试前休息也很重要。","Kǎoshì qián xiūxi yě hěn zhòngyào.","Rest is also important before an exam."],
-   ["这是一件很重要的事情。","Zhè shì yí jiàn hěn zhòngyào de shìqing.","This is a very important matter."]
-  ]}
+const starterVocab = [
+ {id:"chi",cn:"吃",py:"chī",en:"to eat",level:1,topic:"Food",type:"Verb",ex:[["我想吃中国菜。","Wǒ xiǎng chī Zhōngguó cài。","I want to eat Chinese food."],["你吃饭了吗？","Nǐ chīfàn le ma?","Have you eaten?"],["我们一起吃吧。","Wǒmen yìqǐ chī ba.","Let's eat together."]]},
+ {id:"he",cn:"喝",py:"hē",en:"to drink",level:1,topic:"Food",type:"Verb",ex:[["我每天喝很多水。","Wǒ měitiān hē hěnduō shuǐ。","I drink a lot of water every day."],["你想喝咖啡还是茶？","Nǐ xiǎng hē kāfēi háishì chá?","Do you want coffee or tea?"],["天气很热，多喝水。","Tiānqì hěn rè, duō hē shuǐ.","It's hot, drink more water."]]},
+ {id:"fan",cn:"饭",py:"fàn",en:"meal; cooked rice",level:1,topic:"Food",type:"Noun",ex:[["晚饭几点开始？","Wǎnfàn jǐ diǎn kāishǐ?","What time does dinner start?"],["我已经吃过饭了。","Wǒ yǐjīng chīguò fàn le.","I've already eaten."],["这家店的饭很好吃。","Zhè jiā diàn de fàn hěn hǎochī.","The food at this restaurant is delicious."]]},
+ {id:"lvyou",cn:"旅游",py:"lǚyóu",en:"to travel; tourism",level:2,topic:"Travel",type:"Verb",ex:[["我喜欢在中国旅游。","Wǒ xǐhuan zài Zhōngguó lǚyóu.","I like traveling in China."],["暑假我们想去云南旅游。","Shǔjià wǒmen xiǎng qù Yúnnán lǚyóu.","We want to travel to Yunnan during summer vacation."],["旅游可以了解不同的文化。","Lǚyóu kěyǐ liǎojiě bùtóng de wénhuà.","Traveling can help you understand different cultures."]]},
+ {id:"yiyuan",cn:"医院",py:"yīyuàn",en:"hospital",level:2,topic:"Health",type:"Noun",ex:[["我在医院实习。","Wǒ zài yīyuàn shíxí.","I am doing an internship at a hospital."],["医院离学校很近。","Yīyuàn lí xuéxiào hěn jìn.","The hospital is very close to the university."],["他昨天去了医院。","Tā zuótiān qù le yīyuàn.","He went to the hospital yesterday."]]},
+ {id:"jia",cn:"检查",py:"jiǎnchá",en:"to examine; check-up",level:3,topic:"Health",type:"Verb",ex:[["医生给病人做了检查。","Yīshēng gěi bìngrén zuò le jiǎnchá.","The doctor examined the patient."],["请先检查一下血压。","Qǐng xiān jiǎnchá yíxià xuèyā.","Please check the blood pressure first."],["明天我要去医院检查。","Míngtiān wǒ yào qù yīyuàn jiǎnchá.","Tomorrow I need to go to the hospital for a check-up."]]},
+ {id:"xuexiao",cn:"学校",py:"xuéxiào",en:"school; university",level:1,topic:"University",type:"Noun",ex:[["我的学校在合肥。","Wǒ de xuéxiào zài Héféi.","My university is in Hefei."],["你什么时候回学校？","Nǐ shénme shíhou huí xuéxiào?","When are you going back to school?"],["学校附近有很多餐厅。","Xuéxiào fùjìn yǒu hěnduō cāntīng.","There are many restaurants near the university."]]},
+ {id:"canjia",cn:"参加",py:"cānjiā",en:"to participate; attend",level:3,topic:"University",type:"Verb",ex:[["我明天要参加一个考试。","Wǒ míngtiān yào cānjiā yí ge kǎoshì.","I have to take an exam tomorrow."],["很多学生参加了这次活动。","Hěnduō xuéshēng cānjiā le zhè cì huódòng.","Many students participated in this activity."],["你愿意参加我们的聚会吗？","Nǐ yuànyì cānjiā wǒmen de jùhuì ma?","Would you like to join our party?"]]},
+ {id:"fangbian",cn:"方便",py:"fāngbiàn",en:"convenient",level:4,topic:"Daily Life",type:"Adjective",ex:[["这里坐地铁很方便。","Zhèlǐ zuò dìtiě hěn fāngbiàn.","Taking the subway here is very convenient."],["你什么时候方便？","Nǐ shénme shíhou fāngbiàn?","When is convenient for you?"],["网上买东西很方便。","Wǎngshàng mǎi dōngxi hěn fāngbiàn.","Buying things online is very convenient."]]},
+ {id:"renao",cn:"热闹",py:"rènào",en:"lively; bustling",level:4,topic:"Culture",type:"Adjective",ex:[["晚上这条街特别热闹。","Wǎnshang zhè tiáo jiē tèbié rènào.","This street is especially lively at night."],["春节的时候城市很热闹。","Chūnjié de shíhou chéngshì hěn rènào.","The city is very lively during Spring Festival."],["我喜欢热闹的地方。","Wǒ xǐhuan rènào de dìfang.","I like lively places."]]},
+ {id:"jianyi",cn:"建议",py:"jiànyì",en:"to suggest; suggestion",level:5,topic:"Communication",type:"Verb",ex:[["医生建议他多休息。","Yīshēng jiànyì tā duō xiūxi.","The doctor suggested that he rest more."],["我建议我们早点出发。","Wǒ jiànyì wǒmen zǎodiǎn chūfā.","I suggest that we leave earlier."],["谢谢你的建议。","Xièxie nǐ de jiànyì.","Thank you for your suggestion."]]},
+ {id:"zhongyao",cn:"重要",py:"zhòngyào",en:"important",level:2,topic:"Daily Life",type:"Adjective",ex:[["健康很重要。","Jiànkāng hěn zhòngyào.","Health is very important."],["考试前休息也很重要。","Kǎoshì qián xiūxi yě hěn zhòngyào.","Rest is also important before an exam."],["这是一件很重要的事情。","Zhè shì yí jiàn hěn zhòngyào de shìqing.","This is a very important matter."]]}
 ];
+
+// Full classic HSK 1–5 vocabulary is loaded free from an open HSK dataset.
+// HSK 1–5 here follows the classic cumulative framework: 150/300/600/1200/2500 words.
+const vocabSources = [1,2,3,4,5].map(level =>
+  `https://raw.githubusercontent.com/jelleverheyen/hsk-vocabulary/master/wordlists/inclusive/old/${level}.json`
+);
+let vocab = starterVocab;
+let vocabReady = false;
+let vocabLoading = true;
+
+const topicRules = {
+ Food:["food","meal","rice","eat","drink","restaurant","dish","vegetable","fruit","meat","fish","cook","taste","sweet","spicy","tea","coffee","bread","cake","beer","wine"],
+ Travel:["travel","tour","trip","ticket","train","flight","airport","station","hotel","tourist","guide","passport","visa","luggage","map","taxi","bus","subway","road","journey","arrive","depart"],
+ Health:["hospital","doctor","patient","medicine","medical","health","ill","sick","disease","pain","treatment","examine","check-up","blood","body","headache","fever","injury","nurse","surgery"],
+ University:["school","student","teacher","university","college","class","course","exam","study","learn","homework","professor","research","degree","graduate","campus","library","education"],
+ Communication:["say","speak","talk","listen","language","word","meaning","explain","answer","question","discuss","communicate","suggest","agree","disagree","opinion","message","news","information"],
+ Culture:["culture","festival","traditional","history","art","music","movie","film","opera","museum","custom","society","holiday","celebrate","religion","story"],
+ DailyLife:["home","house","room","family","friend","work","job","money","buy","sell","shop","phone","computer","internet","clothes","weather","time","day","morning","night","life","convenient","important"]
+};
+function cleanEnglish(meanings){return (meanings||[]).join("; ").replace(/CL:[^;]+/g,"").replace(/\s+/g," ").trim().slice(0,220)||"Chinese word";}
+function inferTopic(en){
+ const t=en.toLowerCase();
+ for(const [topic,keys] of Object.entries(topicRules)) if(keys.some(k=>t.includes(k))) return topic.replace("DailyLife","Daily Life");
+ return "Daily Life";
+}
+function inferType(pos){
+ if(pos.includes("v")) return "Verb";
+ if(pos.includes("a")) return "Adjective";
+ if(pos.includes("n") || pos.includes("nr") || pos.includes("ns")) return "Noun";
+ return "Other";
+}
+function fallbackExamples(w){
+ const x=w.cn, py=w.py, en=w.en;
+ if(w.type==="Noun") return [
+  [`这是${x}。`,`Zhè shì ${py}.`,`This is ${en}.`],
+  [`我每天都会看到${x}。`,`Wǒ měitiān dōu huì kàndào ${py}.`,`I see ${en} in daily life.`],
+  [`你对${x}了解多少？`,`Nǐ duì ${py} liǎojiě duōshao?`,`How much do you know about ${en}?`]
+ ];
+ if(w.type==="Adjective") return [
+  [`这个地方很${x}。`,`Zhège dìfang hěn ${py}.`,`This place is very ${en}.`],
+  [`我觉得${x}很重要。`,`Wǒ juéde ${py} hěn zhòngyào.`,`I think ${en} is important.`],
+  [`你觉得这样${x}吗？`,`Nǐ juéde zhèyàng ${py} ma?`,`Do you think it is this ${en}?`]
+ ];
+ if(w.type==="Verb") return [
+  [`我每天都要${x}。`,`Wǒ měitiān dōu yào ${py}.`,`I ${en} every day.`],
+  [`我们一起${x}吧。`,`Wǒmen yìqǐ ${py} ba.`,`Let's ${en} together.`],
+  [`你什么时候可以${x}？`,`Nǐ shénme shíhou kěyǐ ${py}?`,`When can you ${en}?`]
+ ];
+ return [[`“${x}”是一个常用词。`,`“${py}” shì yí ge chángyòng cí.`,`“${en}” is a commonly used word.`],[`你可以在生活中看到“${x}”。`,`Nǐ kěyǐ zài shēnghuó zhōng kàndào “${py}”.`,`You can encounter “${en}” in everyday life.`]];
+}
+function normalizeEntry(raw, level){
+ const form=(raw.forms||[])[0]||{};
+ const tr=form.transcriptions||{};
+ const meanings=form.meanings||[];
+ const py=tr.pinyin||"";
+ const en=cleanEnglish(meanings);
+ const starter=starterVocab.find(x=>x.cn===raw.simplified);
+ const type=starter?.type||inferType(raw.pos||[]);
+ return {id:`hsk-${level}-${raw.simplified}`,cn:raw.simplified,py:starter?.py||py,en:starter?.en||en,level,topic:starter?.topic||inferTopic(en),type,ex:starter?.ex||fallbackExamples({cn:raw.simplified,py:py||"",en,type})};
+}
+async function loadFullVocab(){
+ try{
+  const results=await Promise.all(vocabSources.map(u=>fetch(u).then(r=>{if(!r.ok)throw new Error("Vocabulary download failed");return r.json();})));
+  const map=new Map();
+  results.forEach((arr,idx)=>arr.forEach(raw=>{const level=idx+1; if(!map.has(raw.simplified)) map.set(raw.simplified,normalizeEntry(raw,level));}));
+  vocab=[...map.values()];
+  vocabReady=true;
+ }catch(err){
+  console.warn(err);
+  vocab=starterVocab;
+ }finally{
+  vocabLoading=false;
+  render();
+ }
+}
+loadFullVocab();
 
 const readings = [
  {level:2,title:"A Busy Day at University",cn:"今天我很忙。早上八点，我去学校上课。中午和朋友一起吃饭。下午我去图书馆学习，晚上回宿舍休息。虽然很累，但是我觉得今天过得很充实。",
@@ -122,7 +138,7 @@ function render(){pageTitle();setActiveNav();const s=document.getElementById("sc
 }
 
 function home(s){
- const mastered=state.mastered.length, total=25, pct=Math.min(100,Math.round(mastered/total*100));
+ const mastered=state.mastered.length, total=vocab.length||2500, pct=Math.min(100,Math.round(mastered/total*100));
  s.innerHTML=`
  <section class="hero"><h2>Build real Chinese.</h2><p>Learn a word → see it in context → hear it → use it.</p>
  <div class="progress-row"><span>HSK 4 → HSK 5 journey</span><span>${pct}%</span></div><div class="progress"><i style="width:${Math.max(5,pct)}%"></i></div></section>
@@ -139,11 +155,11 @@ function home(s){
   <div class="card action" onclick="nav('practice')"><div class="icon">🎭</div><div class="card-title">Roleplay</div><div class="card-sub">Hospital, food, university & more</div></div>
   <div class="card action" onclick="nav('chat')"><div class="icon">💬</div><div class="card-title">Chat Partner</div><div class="card-sub">Natural Chinese conversation</div></div>
  </div>
- <div class="section-head"><h3>Starter words</h3></div>
+ <div class="section-head"><h3>${vocabReady?"Vocabulary library":"Starter words"}</h3><span style="font-size:11px;color:var(--muted)">${vocabReady?`${vocab.length.toLocaleString()} loaded`:"Loading full library…"}</span></div>
  <div class="word-list">${vocab.slice(0,4).map(wordMini).join("")}</div>`;
  bindWordRows();
 }
-function wordMini(w){return `<div class="word-row" data-word="${w.id}"><div><div class="word-cn">${w.cn}</div><div class="word-py">${w.py} · ${w.en}</div></div><span class="word-type">${w.type}</span></div>`}
+function wordMini(w){return `<div class="word-row" data-word="${w.id}"><div><div class="word-cn">${w.cn}</div><div class="word-py">${w.py} · ${w.en}</div></div><span class="word-type">HSK ${w.level} · ${w.type}</span></div>`}
 function vocabulary(s){
  if(state.selected){wordDetail(s,state.selected);return}
  const topics=["All",...new Set(vocab.map(x=>x.topic))];
@@ -156,6 +172,7 @@ function vocabulary(s){
  );
  s.innerHTML=`
  <input class="search" id="vsearch" placeholder="Search Chinese, pinyin or English…" value="${state.query}">
+ ${vocabLoading?`<div class="card" style="margin-bottom:12px">Loading the full HSK 1–5 vocabulary library…</div>`:`<div class="card" style="margin-bottom:12px"><strong>${vocab.length.toLocaleString()} words available</strong><div class="card-sub">Classic HSK 1–5 cumulative library · 150 / 300 / 600 / 1200 / 2500 framework</div></div>`}
  <div class="section-head"><h3>HSK level</h3></div>
  <div class="chips">${[1,2,3,4,5].map(x=>`<button class="chip ${state.level===x?"active":""}" onclick="state.level=${x};render()">HSK ${x}</button>`).join("")}</div>
  <div class="section-head"><h3>Topics</h3></div><div class="chips">${topics.map(x=>`<button class="chip ${state.topic===x?"active":""}" onclick="state.topic='${x}';render()">${x}</button>`).join("")}</div>
