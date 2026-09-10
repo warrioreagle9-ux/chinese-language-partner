@@ -298,37 +298,70 @@ function showWord(t){
 
 function practice(s){
  if(state.role){
+  const r=state.role;
+  const last=r.messages[r.messages.length-1];
   s.innerHTML=`<button class="back" onclick="state.role=null;render()">← Change scenario</button>
-  <div class="detail-card"><span class="word-type">HSK ${state.role.level} · ${state.role.name}</span><h2 style="margin:10px 0 4px">${state.role.icon} ${state.role.name}</h2>
-  <p style="color:var(--muted);margin-top:0">${state.role.desc}</p>
-  <div class="chat" id="roleChat">
-   <div class="bubble bot">${state.role.open}</div>
-  </div>
-  <div class="chat-input"><input id="roleInput" placeholder="Type your Chinese answer…"><button onclick="sendRole()">Send</button></div>
-  <div class="feedback"><strong>Practice goal</strong><p style="margin-bottom:0;color:var(--muted)">Try to answer in Chinese. In the next version, AI will score grammar, naturalness and vocabulary.</p></div>
+  <div class="detail-card role-card">
+   <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span class="word-type">HSK ${r.level} · ${r.name}</span><span class="turn-badge">Turn ${r.turns}/6</span></div>
+   <h2 style="margin:10px 0 4px">${r.icon} ${r.name}</h2>
+   <p class="role-desc">${r.desc}</p>
+   <div class="role-goal"><strong>Your goal</strong><span>${r.goal}</span></div>
+   <div class="chat role-chat" id="roleChat">${r.messages.map(x=>`<div class="bubble ${x[0]}">${escapeHtml(x[1])}</div>`).join("")}</div>
+   <div class="role-tools">
+    <button class="toggle" onclick="roleHint()">💡 Hint</button>
+    <button class="toggle" onclick="speakRoleLast()">🔊 Hear Chinese</button>
+    <button class="toggle" onclick="roleTranslate()">🌐 Help</button>
+   </div>
+   <div id="roleHelp"></div>
+   <div class="chat-input"><input id="roleInput" placeholder="Type your Chinese answer…" autocomplete="off"><button onclick="sendRole()">Send</button></div>
+   <div class="feedback"><strong>Live feedback</strong><p id="roleFeedback" style="margin-bottom:0;color:var(--muted)">${r.feedback||"Try to answer in Chinese. Short answers are okay — focus on communicating."}</p></div>
+   ${r.turns>=6?`<button class="play" style="width:100%;margin-top:14px" onclick="finishRole()">Finish & see feedback</button>`:""}
   </div>`;
+  const input=document.getElementById("roleInput"); if(input) input.addEventListener("keydown",e=>{if(e.key==="Enter")sendRole()});
+  const box=document.getElementById("roleChat"); if(box) box.scrollTop=box.scrollHeight;
   return;
  }
- s.innerHTML=`<div class="card" style="margin-bottom:14px"><div class="section-head" style="margin-top:0"><h3>Real-life roleplay</h3></div><p class="card-sub">Choose a situation. Version 0.1 uses guided practice; AI conversation comes next.</p>
+ s.innerHTML=`<div class="card" style="margin-bottom:14px"><div class="section-head" style="margin-top:0"><h3>Real-life roleplay</h3></div><p class="card-sub">Practice realistic situations with guided adaptive replies. Choose your HSK target and try to keep the conversation going.</p>
  <div class="segment"><h4>HSK target</h4><select class="select" id="roleLevel">${[1,2,3,4,5].map(x=>`<option ${x===4?"selected":""}>${x}</option>`).join("")}</select></div></div>
- <div class="scenario">${scenarios.map((x,i)=>`<button onclick="startRole(${i})"><div style="font-size:24px">${x[0]}</div><strong>${x[1]}</strong><span>${x[2]}</span></button>`).join("")}</div>`;
+ <div class="scenario">${scenarios.map((x,i)=>`<button onclick="startRole(${i})"><div style="font-size:24px">${x[0]}</div><strong>${x[1]}</strong><span>${x[2]}</span></button>`).join("")}</div>
+ <div class="card role-tip"><strong>How to practice</strong><div class="card-sub">Read the situation → answer in Chinese → use the hint if stuck → finish after 6 turns to review your performance.</div></div>`;
 }
+const roleFlows=[
+ {open:"您好，请问您哪里不舒服？",goal:"Explain your main symptom and how long you have had it.",hint:"我头疼三天了。 / 我有点发烧。 / 我从昨天开始咳嗽。",keywords:["不舒服","头","疼","发烧","咳","症状","天","昨天","痛"],replies:["好的。这个症状什么时候开始的？","明白了。除了这个，还有其他不舒服吗？","好的。我建议你先休息一下。需要我帮你说明检查流程吗？","了解。请告诉我你以前有没有出现过类似情况？","谢谢，你说得很清楚。我们继续最后一个问题。"]},
+ {open:"您好，欢迎光临。请问您想吃什么？",goal:"Order a meal, ask about a dish, and request the bill.",hint:"我要一份牛肉面。 / 这个菜辣吗？ / 可以买单吗？",keywords:["要","来","份","菜","面","饭","辣","喝","买单","结账","不要","可以"],replies:["好的。您想吃米饭、面条，还是其他菜？","没问题。您还需要喝点什么吗？","好的。这个菜可以做得不太辣。您还需要别的吗？","好的，请稍等。我马上帮您安排。","吃完以后如果需要买单，可以直接告诉我。"]},
+ {open:"你好，你今天有课吗？",goal:"Talk about your class, research, schedule, and ask a classmate a question.",hint:"我今天有课。 / 我下午要做实验。 / 你什么时候有空？",keywords:["课","上课","老师","研究","论文","实验","今天","明天","下午","晚上","空","学习"],replies:["原来如此。你今天主要学习什么？","听起来不错。你的课程什么时候结束？","明白了。你最近的研究忙不忙？","如果你需要帮助，我们可以一起讨论。","好的。你还有什么想问我的？"]},
+ {open:"你好，请问你要去哪里？",goal:"Tell the driver your destination, discuss the route, and confirm the price/time.",hint:"我要去火车站。 / 请在前面停一下。 / 大概需要多久？",keywords:["去","到","车站","医院","学校","机场","酒店","停","多久","钱","元","左","右"],replies:["好的。你具体要去哪个地方？","没问题。你希望走高速还是普通道路？","大概需要三十分钟，现在路上有一点堵车。","好的。快到了，我会提前告诉你。","我们到了。请确认一下你的物品。"]},
+ {open:"您好，这件衣服多少钱？",goal:"Ask the price, size, color, and whether you can buy it.",hint:"多少钱？ / 有大一点的吗？ / 可以便宜一点吗？",keywords:["多少","钱","价格","便宜","大","小","颜色","黑","白","红","试","买","码"],replies:["这件衣服现在是两百八十元。您想看看其他颜色吗？","好的。您平时穿多大码？","这个颜色很受欢迎。您要不要试一下？","如果您喜欢，我可以帮您看看有没有优惠。","好的。确定以后可以去前台付款。"]},
+ {open:"您好，请问您想租什么样的房子？",goal:"Describe your preferred apartment, budget, location, and move-in date.",hint:"我想租一室一厅。 / 离学校近一点。 / 预算是三千元左右。",keywords:["租","房子","一室","两室","学校","地铁","预算","房租","押金","合同","入住","附近"],replies:["好的。您想找一室还是两室的房子？","明白。您对房租预算有什么要求？","好的。您希望离学校或者地铁站近一点吗？","入住时间确定了吗？我可以帮您了解合同条件。","签合同以前记得确认房租、押金和水电费。"]}
+];
 function startRole(i){
- const lvl=Number(document.getElementById("roleLevel").value), x=scenarios[i];
- state.role={icon:x[0],name:x[1],desc:x[2],level:lvl,open:
-   i===0?"您好，请问您哪里不舒服？":
-   i===1?"您好，欢迎光临。请问您想吃什么？":
-   i===2?"你好，你今天有课吗？":
-   i===3?"你好，请问你要去哪里？":
-   i===4?"您好，这件衣服多少钱？":
-   "您好，请问您想租什么样的房子？"};
+ const lvl=Number(document.getElementById("roleLevel").value), x=scenarios[i], f=roleFlows[i];
+ state.role={icon:x[0],name:x[1],desc:x[2],level:lvl,goal:f.goal,hint:f.hint,keywords:f.keywords,replies:f.replies,messages:[["bot",f.open]],turns:0,score:0,used:0,feedback:"Try to answer in Chinese. Short answers are okay — focus on communicating."};
  render();
 }
 function sendRole(){
- const input=document.getElementById("roleInput"), text=input.value.trim();if(!text)return;
- const box=document.getElementById("roleChat");box.insertAdjacentHTML("beforeend",`<div class="bubble me">${escapeHtml(text)}</div>`);
- input.value="";
- setTimeout(()=>box.insertAdjacentHTML("beforeend",`<div class="bubble bot">很好！请继续用中文回答。你可以试着说得更完整一点。</div>`),350);
+ const input=document.getElementById("roleInput"), text=input?.value.trim(); if(!text)return;
+ const r=state.role; if(r.turns>=6){toast("Finish this roleplay to see your feedback");return;}
+ r.messages.push(["me",text]); r.turns++;
+ const hit=r.keywords.filter(k=>text.includes(k)).length;
+ if(hit>0) r.score+=1;
+ if(text.length>=6) r.score+=1;
+ let idx=Math.min(r.used,r.replies.length-1);
+ let reply=r.replies[idx];
+ if(text.includes("不知道")||text.includes("不会")||text.includes("不懂")) reply="没关系。你可以试试："+r.hint;
+ r.messages.push(["bot",reply]); r.used++;
+ if(hit>=2) r.feedback="👍 Good! You used useful situation-specific vocabulary.";
+ else if(hit===1) r.feedback="🙂 Good start. Try adding one more detail, such as time, place, reason, or quantity.";
+ else r.feedback="💡 I understood your message. Try using one phrase from the Hint to make it more specific.";
+ input.value=""; render();
+}
+function roleHint(){const h=document.getElementById("roleHelp");if(h)h.innerHTML=`<div class="role-help"><strong>Useful phrase</strong><br>${escapeHtml(state.role.hint)}</div>`}
+function roleTranslate(){const h=document.getElementById("roleHelp");if(h)h.innerHTML=`<div class="role-help"><strong>English goal</strong><br>${escapeHtml(state.role.goal)}</div>`}
+function speakRoleLast(){const r=state.role;const last=[...r.messages].reverse().find(x=>x[0]==="bot");if(last)speak(last[1])}
+function finishRole(){
+ const r=state.role; const max=12; const pct=Math.min(100,Math.round(r.score/max*100));
+ const tip=r.score>=9?"Excellent! Try the same situation at HSK 5 with longer answers.":r.score>=6?"Good job. Next time, add more details and ask a follow-up question.":"Keep practicing. Use the hint phrases and try to make each answer a little longer.";
+ document.getElementById("screen").innerHTML=`<button class="back" onclick="state.role=null;render()">← Back to practice</button><div class="detail-card"><div class="learn-label">Roleplay complete</div><div class="icon">🎭</div><h2>${r.name}</h2><div class="score">${pct}%</div><p class="card-sub">Conversation score based on vocabulary use, detail, and completed turns. This offline version does not use an AI model yet.</p><div class="feedback"><strong>Coach feedback</strong><p style="margin-bottom:0">${tip}</p></div><div class="grid" style="margin-top:14px"><div class="card stat"><strong>${r.turns}</strong><span>Your turns</span></div><div class="card stat"><strong>${r.score}</strong><span>Practice points</span></div></div><button class="play" style="width:100%;margin-top:16px" onclick="state.role=null;render()">Practice another scenario</button></div>`;
 }
 function chat(s){
  s.innerHTML=`<div class="card" style="margin-bottom:12px"><span class="word-type">Friend Mode · HSK 4</span><h3 style="margin:10px 0 5px">你的中文朋友 🇨🇳</h3><div class="card-sub">Natural conversation first. Teacher corrections will be added in the AI version.</div></div>

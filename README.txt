@@ -1,12 +1,6 @@
-Chinese Language Partner v0.4
+Chinese Language Partner – Version 0.5
 
-Reading upgrade:
-- 15 HSK 1-5 practical reading passages
-- Topics: university, hospital/health, food, travel, culture, communication, daily life
-- Tap highlighted vocabulary to open the dictionary
-- Chinese audio with browser speech synthesis
-- Pinyin and English toggles
-- Comprehension question after every passage
-- Keeps the 2,500-word HSK 1-5 vocabulary library and v0.3 learning system
-
-Deployment: replace the existing GitHub Pages files and commit directly to main.
+Stage 4: Real-Life Roleplay upgrade.
+Includes HSK 1–5 vocabulary, reading library, learning/review, quiz, and six adaptive guided roleplays.
+Roleplays now track turns, situation vocabulary, hints, Chinese audio, live feedback, and an end-of-session score.
+This version is still fully free/offline-friendly and does not require an AI API. A real AI backend can be connected in a later version.
