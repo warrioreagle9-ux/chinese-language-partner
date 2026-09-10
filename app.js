@@ -109,7 +109,7 @@ const scenarios = [
 ];
 
 let state = {
- page:"home", topic:"All", type:"All", level:5, query:"",
+ page:"home", topic:"All", type:"All", level:5, query:"", learnMode:"review", learnWord:null, learnRevealed:false, quiz:null,
  selected:null, reading:null, role:null,
  mastered: JSON.parse(localStorage.getItem("clp-mastered")||"[]"),
  chat:[["bot","你好！我是你的中文学习伙伴。今天想聊什么？"]]
@@ -126,11 +126,12 @@ function toast(t){const e=document.getElementById("toast");e.textContent=t;e.cla
 function nav(page){state.page=page;state.selected=null;state.reading=null;render()}
 function setActiveNav(){document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.nav===state.page))}
 function pageTitle(){
- const m={home:"你好, Waleed 👋",vocab:"Vocabulary",reading:"Reading",practice:"Real-Life Practice",chat:"Chat Partner"};
+ const m={home:"你好, Waleed 👋",learn:"Learn & Review",vocab:"Vocabulary",reading:"Reading",practice:"Real-Life Practice",chat:"Chat Partner"};
  document.getElementById("pageTitle").textContent=m[state.page]||"Chinese Partner";
 }
 function render(){pageTitle();setActiveNav();const s=document.getElementById("screen");s.innerHTML="";
  if(state.page==="home") home(s);
+ if(state.page==="learn") learn(s);
  if(state.page==="vocab") vocabulary(s);
  if(state.page==="reading") reading(s);
  if(state.page==="practice") practice(s);
@@ -150,6 +151,7 @@ function home(s){
  </div>
  <div class="section-head"><h3>Quick practice</h3></div>
  <div class="grid">
+  <div class="card action" onclick="nav('learn')"><div class="icon">🧠</div><div class="card-title">Learn & Review</div><div class="card-sub">Spaced repetition · quizzes</div></div>
   <div class="card action" onclick="nav('vocab')"><div class="icon">📚</div><div class="card-title">Vocabulary</div><div class="card-sub">HSK 1–5 · topics · examples</div></div>
   <div class="card action" onclick="nav('reading')"><div class="icon">📖</div><div class="card-title">Reading</div><div class="card-sub">Pinyin + translation + audio</div></div>
   <div class="card action" onclick="nav('practice')"><div class="icon">🎭</div><div class="card-title">Roleplay</div><div class="card-sub">Hospital, food, university & more</div></div>
@@ -158,6 +160,65 @@ function home(s){
  <div class="section-head"><h3>${vocabReady?"Vocabulary library":"Starter words"}</h3><span style="font-size:11px;color:var(--muted)">${vocabReady?`${vocab.length.toLocaleString()} loaded`:"Loading full library…"}</span></div>
  <div class="word-list">${vocab.slice(0,4).map(wordMini).join("")}</div>`;
  bindWordRows();
+}
+
+const SRS_KEY="clp-srs-v03";
+function getSRS(){try{return JSON.parse(localStorage.getItem(SRS_KEY)||"{}")}catch{return {}}}
+function saveSRS(x){localStorage.setItem(SRS_KEY,JSON.stringify(x))}
+function dueWords(){
+ const srs=getSRS(), now=Date.now();
+ return vocab.filter(w=>srs[w.id] && (srs[w.id].due||0)<=now);
+}
+function scheduleWord(id,rating){
+ const srs=getSRS(), old=srs[id]||{box:0,seen:0};
+ let box=old.box||0;
+ if(rating==="again") box=0;
+ else if(rating==="hard") box=Math.max(0,box);
+ else if(rating==="good") box=Math.min(5,box+1);
+ else box=Math.min(5,box+2);
+ const days=[0,1,3,7,14,30][box];
+ srs[id]={box,seen:(old.seen||0)+1,due:Date.now()+days*86400000,last:rating};
+ saveSRS(srs);
+ if(rating!=="again" && box>=2 && !state.mastered.includes(id)){state.mastered=[...state.mastered,id];save()}
+ state.learnWord=null;state.learnRevealed=false;render();
+}
+function pickLearnWord(){
+ const due=dueWords();
+ if(due.length) return due[Math.floor(Math.random()*due.length)];
+ const srs=getSRS();
+ const fresh=vocab.filter(w=>!srs[w.id] && w.level<=state.level);
+ if(fresh.length) return fresh[Math.floor(Math.random()*Math.min(50,fresh.length))];
+ return vocab[Math.floor(Math.random()*vocab.length)];
+}
+function learn(s){
+ const srs=getSRS(), due=dueWords(), studied=Object.keys(srs).length, mastered=state.mastered.length;
+ if(state.quiz){quizView(s,state.quiz);return}
+ if(state.learnWord){
+   const w=state.learnWord;
+   s.innerHTML=`<button class="back" onclick="state.learnWord=null;state.learnRevealed=false;render()">← Back to learning</button>
+   <div class="detail-card learn-card"><div class="learn-label">${due.includes(w)?"REVIEW DUE":"NEW WORD"} · HSK ${w.level}</div>
+   <div class="detail-cn">${w.cn}</div><div class="detail-py">${w.py}</div>
+   ${state.learnRevealed?`<div class="detail-en">${w.en}</div><div class="section-head"><h3>Example</h3></div><div class="example"><div class="cn">${w.ex[0][0]}</div><div class="py">${w.ex[0][1]}</div><div class="en">${w.ex[0][2]}</div><button class="play" onclick="speak('${w.ex[0][0]}')">▶ Play</button></div>
+   <div class="section-head"><h3>How well did you know it?</h3></div><div class="rating-grid"><button onclick="scheduleWord('${w.id}','again')">Again<br><small>Today</small></button><button onclick="scheduleWord('${w.id}','hard')">Hard<br><small>~1 day</small></button><button onclick="scheduleWord('${w.id}','good')">Good<br><small>Next review</small></button><button onclick="scheduleWord('${w.id}','easy')">Easy<br><small>Longer gap</small></button></div>`:`<button class="play" style="width:100%;margin-top:20px" onclick="state.learnRevealed=true;render()">Show meaning & example</button>`}</div>`;
+   return;
+ }
+ s.innerHTML=`<div class="hero"><h2>Study smarter.</h2><p>Learn new words, review due words, and build a long-term memory habit.</p>
+ <div class="stat-grid"><div class="card stat"><strong>${due.length}</strong><span>Due today</span></div><div class="card stat"><strong>${studied}</strong><span>Studied</span></div><div class="card stat"><strong>${mastered}</strong><span>Mastered</span></div></div></div>
+ <div class="section-head"><h3>Start a session</h3></div><div class="grid"><div class="card action" onclick="state.learnWord=pickLearnWord();render()"><div class="icon">🧠</div><div class="card-title">${due.length?"Review due words":"Learn a new word"}</div><div class="card-sub">Adaptive review based on your answers</div></div>
+ <div class="card action" onclick="startQuiz()"><div class="icon">🎯</div><div class="card-title">Quick quiz</div><div class="card-sub">10 questions · meaning & recognition</div></div></div>
+ <div class="card"><h3>How review works</h3><p class="card-sub">Rate each word: Again, Hard, Good or Easy. Your next review is scheduled automatically.</p><div class="intervals"><span>1d</span><span>3d</span><span>7d</span><span>14d</span><span>30d</span></div></div>`;
+}
+function startQuiz(){
+ const pool=vocab.filter(w=>w.level<=state.level); const qs=[]; const used=new Set();
+ for(let i=0;i<Math.min(10,pool.length);i++){let w; do{w=pool[Math.floor(Math.random()*pool.length)]}while(used.has(w.id)); used.add(w.id); const opts=[w.en]; while(opts.length<4){const x=pool[Math.floor(Math.random()*pool.length)].en;if(x&&!opts.includes(x))opts.push(x)} qs.push({w,opts:opts.sort(()=>Math.random()-.5),answer:null})}
+ state.quiz={qs,i:0,score:0};render();
+}
+function quizView(s,q){const item=q.qs[q.i]; if(!item){s.innerHTML=`<div class="detail-card"><div class="icon">🏆</div><h2>Quiz complete!</h2><div class="quiz-score">${q.score} / ${q.qs.length}</div><p class="card-sub">Nice work. Your quiz result is saved for this session.</p><button class="play" style="width:100%" onclick="state.quiz=null;render()">Back to learning</button></div>`;return}
+ s.innerHTML=`<button class="back" onclick="state.quiz=null;render()">← Exit quiz</button><div class="detail-card"><div class="learn-label">Question ${q.i+1} of ${q.qs.length}</div><div class="detail-cn" style="font-size:48px">${item.w.cn}</div><div class="detail-py">${item.w.py}</div><h3>What does this mean?</h3><div class="quiz-options">${item.opts.map((o,i)=>`<button class="quiz-option" onclick="answerQuiz(${i})">${o}</button>`).join("")}</div></div>`;
+}
+function answerQuiz(i){const q=state.quiz,item=q.qs[q.i];if(item.answer!==null)return;item.answer=i;const correct=item.opts[i]===item.w.en;if(correct){q.score++;toast("Correct! 🎉")}else toast("Not quite — keep practicing.");scheduleWord(item.w.id,correct?"good":"again");
+ // scheduleWord renders and clears learnWord; restore quiz state after the render delay
+ setTimeout(()=>{if(state.quiz){q.i++;render()}},10);
 }
 function wordMini(w){return `<div class="word-row" data-word="${w.id}"><div><div class="word-cn">${w.cn}</div><div class="word-py">${w.py} · ${w.en}</div></div><span class="word-type">HSK ${w.level} · ${w.type}</span></div>`}
 function vocabulary(s){
